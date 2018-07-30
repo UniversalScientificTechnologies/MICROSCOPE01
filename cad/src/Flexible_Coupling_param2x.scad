@@ -5,13 +5,13 @@
 D1 = 25;
 
 // INNER DIAMETER 1
-D2 = 6;
+D2 = 5.5;
 
 // INNER DIAMETER 2
 D2B = 0;
 
 // TOTAL HEIGHT
-H1 = 34;
+H1 = 33;
 
 // BASE HEIGHT
 H2 = 8;
@@ -101,11 +101,11 @@ for (i=[1:N]){
 
 //V mikroskopu
 dv = 13; // Vnější průměr trubky
-dd = 9.2; // Vnitrřní průměr trubky (průměr díry)
+dd = 9; // Vnitrřní průměr trubky (průměr díry)
 hm = 20; //Výška válce do mikroskopu
 
 // Zářez na čudlík
-zs = 2.5;  // Šířka zářezu
+zs = 2.2;  // Šířka zářezu
 zh = 5;  // Hloubka zářezu
 
 
