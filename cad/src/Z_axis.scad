@@ -23,14 +23,14 @@ hmu = 5; // mezera nad spojou (u motoru)
   sp2 = rm - 14; //Šířka příček kolmo na radiální směr
   
   // Upevnění k mikroskopu
-  d1u = 74;    // Vnější průměr
+  d1u = 78;    // Vnější průměr
   d2u = d + 6; // Vnitřní průměr
   hu = 4;      // Výška kotouče pro upevnění
   
   d3u = 6;      // Díry na šrouby
   d3h = 10;      // Díry hlavy šroubu
   h3h = 20;      // delka prostoru pro hlavu sroubu
-  ru = 31;      // Vzdálenost děr na šrouby od středu
+  ru = 33;      // Vzdálenost děr na šrouby od středu
   
   
 hc = hmd + h + hmu + hm;     // Celková výška objektu
@@ -61,20 +61,20 @@ module teleso(){
 
 
 
-
+rot = -10;
 
 module srouby(){
  
       //Díry na šrouby k mikroskopu
-      rotate(0){
+      rotate(0-rot){
         translate([ru, 0, 0]) cylinder(h=hu+2, d=d3u);
         translate([ru, 0, hu]) cylinder(h=h3h, d=d3h);
       }
-      rotate(120){
-        translate([ru, 0, 0]) cylinder(h=hu+2, d=d3u);
-        translate([ru, 0, hu]) cylinder(h=h3h, d=d3h);
+      rotate(-126-rot){
+        translate([ru+1, 0, 0]) cylinder(h=hu+2, d=d3u);
+        translate([ru+1, 0, hu]) cylinder(h=h3h, d=d3h);
       }
-      rotate(240){
+      rotate(97-rot){
         translate([ru, 0, 0]) cylinder(h=hu+2, d=d3u);
         translate([ru, 0, hu]) cylinder(h=h3h, d=d3h);
       }
@@ -111,7 +111,12 @@ difference(){
     translate([0,0,10]){hull(){
             rotate([90,0,0]) cylinder(h=50, d=5);
             translate([0,0,h-5]) rotate([90,0,0]) cylinder(h=50, d=5);
-    }}
+    }
+    translate([-d1u/2,0,0])
+        cube([37, d1u + 10, 200], center = true);
+    translate([10,-58,0])
+        cylinder(200, 58, center = true);
+    }
 
 }
 //translate([0,0,hmd]) spojka();
