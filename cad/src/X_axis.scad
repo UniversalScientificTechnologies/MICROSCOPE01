@@ -11,6 +11,7 @@ ddvni = 73;    // Vnitřní průměr dolní kruhové části
 hvni = 57;  // Výška vnitřního kuželu
 dhvne = 78;      // Vnější průměr horní kruhové části
 dhvni = 73;    // Vnitřní průměr horní kruhové části
+tlt = h-hvni; // tloustka stropu
 
 // Kruh se šrouby a podpěrami
 vzd = 23;    // Vzdálenost středů obou hlavních kruhů
@@ -19,7 +20,8 @@ vzdsroub = 31;   //  Vzdálenost šroubů od středu podpěrného kruhu
 dsroub = 4.6;   // Průměr díry na šroub
 
 // Šrouby k motoru
-dsm = 5;  // Průměr šroubů od motoru
+dsm = 5.3;  // Průměr šroubů od motoru
+dhm = 9;
 rozm = 47.14; // Rozteč šroubů u motoru
 
 
@@ -91,18 +93,23 @@ difference() {
   // Otvory na motor 
     translate([rozm/2, rozm/2, h-2.8])
         cylinder(10, dsm/2, dsm/2);
+    translate([rozm/2, rozm/2, h-30-tlt])
+        cylinder(30, dhm/2, dhm/2);
     
-    rotate(90)
-    translate([rozm/2, rozm/2, h-2.8])
+    translate([rozm/2, -rozm/2, h-2.8])
         cylinder(10, dsm/2, dsm/2);
+    translate([rozm/2, -rozm/2, h-30-tlt])
+        cylinder(30, dhm/2, dhm/2);
        
-    rotate(180)
-    translate([rozm/2, rozm/2, h-2.8])
+    translate([-rozm/2, rozm/2, h-2.8])
         cylinder(10, dsm/2, dsm/2);
+    translate([-rozm/2, rozm/2, h-30-tlt])
+        cylinder(30, dhm/2, dhm/2);
        
-    rotate(-90)
-    translate([rozm/2, rozm/2, h-2.8])
+    translate([-rozm/2, -rozm/2, h-2.8])
         cylinder(10, dsm/2, dsm/2);
+    translate([-rozm/2, -rozm/2, h-30-tlt])
+        cylinder(30, dhm/2, dhm/2);
        
   // Otvor na osu
     translate([0,0,h-2.8])
