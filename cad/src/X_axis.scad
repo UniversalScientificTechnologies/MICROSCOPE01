@@ -89,24 +89,24 @@ difference() {
        }
        
   // Otvory na motor 
-    translate([rozm/2, rozm/2, h-20])
-        cylinder(50, dsm/2, dsm/2);
+    translate([rozm/2, rozm/2, h-2.8])
+        cylinder(10, dsm/2, dsm/2);
     
     rotate(90)
-    translate([rozm/2, rozm/2, h-20])
-        cylinder(50, dsm/2, dsm/2);
+    translate([rozm/2, rozm/2, h-2.8])
+        cylinder(10, dsm/2, dsm/2);
        
     rotate(180)
-    translate([rozm/2, rozm/2, h-20])
-        cylinder(50, dsm/2, dsm/2);
+    translate([rozm/2, rozm/2, h-2.8])
+        cylinder(10, dsm/2, dsm/2);
        
     rotate(-90)
-    translate([rozm/2, rozm/2, h-20])
-        cylinder(50, dsm/2, dsm/2);
+    translate([rozm/2, rozm/2, h-2.8])
+        cylinder(10, dsm/2, dsm/2);
        
   // Otvor na osu
-    translate([0,0,h])
-       cylinder(20, 5, 5, center = true);
+    translate([0,0,h-2.8])
+       cylinder(10, 5, 5);
        
 }    
 
