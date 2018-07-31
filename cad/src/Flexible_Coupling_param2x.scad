@@ -11,31 +11,34 @@ D2 = 5.5;
 D2B = 0;
 
 // TOTAL HEIGHT
-H1 = 33;
+H1 = 32;
 
 // BASE HEIGHT
 H2 = 8;
 
 // NUMBER OF FLEXIBLE ELEMENTS
-N  = 10;
+n = 6;
+
+// Thickness of springs
+N  = 9;
 
 // SCREW HOLE DIAMETER
 D3 = 3.5;
 
 // NUT HOLE DIAMETER
-Dnut=6.5;
+Dnut=6.2;
 
 // NUT HOLE THICKNESS
-Hnut=2.5;
+Hnut=3.4;
 
 // FLAT SHAFT THICKNESS
-B=8.5;
+B=7;
 
 // SCREW HOLE DISTANCE
 H3=4;
 
 // SPRINGS RESOLUTION
-SLICES=16; //[6:36]
+SLICES=25; //[6:36]
 
 // ********** DON'T CHANGE BELOW UNLESS YOU KNOW WHAT TO DO ********** //
 
@@ -46,7 +49,7 @@ fn = 4*N;	// default face number for cylinders
 R3 = D3/2;	// screw hole radius
 Rnut=Dnut/2;	// nut hole radius
 B2 = B-Ri;	// flat face distance from center
-Hspring=H1-2*H2;
+Hspring=H1-H2-4;
 
 module sq_spring(in_R,out_R,height,rot) {
 	width=out_R-in_R;
@@ -84,19 +87,19 @@ module body2() {
 	difference() {
 		union() {
 			difference(){
-				cylinder (r=Re,h=H2,center=false, $fn=fn);
-				cylinder(r=Ri2,h=H2,center=false, $fn=fn);
+				cylinder (r=Re,h=4,center=false, $fn=fn);
+				cylinder(r=Ri2,h=4,center=false, $fn=fn);
 				}
 			translate([B2,-Ri2,0]) cube(size=[Ri2,2*Ri2,H2], center=false);
 		}
-		hole_h(H3);
+		
 	}
 }
 
 body1();
 translate([0,0,H1]) rotate([0,180,0]) body2();
-for (i=[1:N]){
-	rotate([0,0,360*i/N]) translate ([0,0,H2]) sq_spring(Ri,Re,Hspring,120);
+for (i=[1:n]){
+	rotate([0,0,360*i/n]) translate ([0,0,H2]) sq_spring(Ri+5,Re,Hspring,120);
 }
 
 //V mikroskopu
