@@ -20,13 +20,13 @@ H2 = 8;
 n = 6;
 
 // Thickness of springs
-N  = 9;
+N  = 9.4;
 
 // SCREW HOLE DIAMETER
 D3 = 3.5;
 
 // NUT HOLE DIAMETER
-Dnut=6.2;
+Dnut=6.5;
 
 // NUT HOLE THICKNESS
 Hnut=3.4;
@@ -99,7 +99,7 @@ module body2() {
 body1();
 translate([0,0,H1]) rotate([0,180,0]) body2();
 for (i=[1:n]){
-	rotate([0,0,360*i/n]) translate ([0,0,H2]) sq_spring(Ri+5,Re,Hspring,120);
+	rotate([0,0,360*i/n]) translate ([0,0,H2]) sq_spring(Ri+5.5,Re,Hspring,120);
 }
 
 //V mikroskopu

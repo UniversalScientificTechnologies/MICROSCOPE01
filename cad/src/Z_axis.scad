@@ -1,5 +1,5 @@
 $fn=100;
-//// Díl k upevnění motoru k mikroskopu pro ovládání osy X
+//// Díl k upevnění motoru k mikroskopu pro ovládání osy Z
 lay = 0.2; // sila vrstvy
 /// Parametry
 h = 25;      // Výška válce spojky
@@ -70,9 +70,9 @@ module srouby(){
         translate([ru, 0, 0]) cylinder(h=hu+2, d=d3u);
         translate([ru, 0, hu]) cylinder(h=h3h, d=d3h);
       }
-      rotate(-126-rot){
-        translate([ru+1, 0, 0]) cylinder(h=hu+2, d=d3u);
-        translate([ru+1, 0, hu]) cylinder(h=h3h, d=d3h);
+      rotate(-127-rot){
+        translate([ru-1, 0, 0]) cylinder(h=hu+2, d=d3u);
+        translate([ru-1, 0, hu]) cylinder(h=h3h, d=d3h);
       }
       rotate(97-rot){
         translate([ru, 0, 0]) cylinder(h=hu+2, d=d3u);
@@ -119,7 +119,7 @@ difference(){
     }
 
 }
-//translate([0,0,hmd]) spojka();
+// translate([0,0,hmd]) spojka();
 }
 // cube(50);
 }
