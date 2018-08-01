@@ -1,0 +1,315 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import rospy
+import time
+import std_msgs
+import axis
+from microscope.msg import microscope_motor, state_microscope_motor, microscope_magnet, state_microscope_magnet
+
+from arom_helper import AromNode
+
+
+
+'''
+
+
+
+PWM-A
+    PWM 0 LED
+    PWM 1 BREAK
+
+PWM-B
+    PWM 0 XY
+    PWM 1 O
+
+
+'''
+
+
+class Mikroskop(AromNode):
+    node_name = "Mikroskop"
+    node_type = "microscope"
+    node_pymlab = True
+
+    def __init__(self, name = "Mikroskop"):
+      #  self.pub_btn = rospy.Publisher('/arom/UI/buttons', std_msgs.msg.String, queue_size=10)
+      #  self.pub_beep = rospy.Publisher('/beeper/preset', std_msgs.msg.String, queue_size=5)
+        self.axis_state = rospy.Publisher('/axis/state', state_microscope_motor, queue_size=5, latch=True)
+        self.magnet_state = rospy.Publisher('/magnet/state', state_microscope_magnet, queue_size=5, latch=True)
+
+        AromNode.__init__(self)
+        #self.set_feature('sendNum__0',{'addr': "/LED/duty", "name": "LED", 'type': "range", 'min':0, 'max': 100})  #tady se nastaví "feature" pro webove rozhrani (tedy jaky ovladaci prvek se zobrazi)
+        #self.set_feature('sendNum__1',{'addr': "/MAG1/duty", "name": "Magnet 1", 'min':-100, 'max': 100})
+        #self.set_feature('sendNum__2',{'addr': "/MAG2/duty", "name": "Magnet 2", 'min':-100, 'max': 100})
+        #self.set_feature('sendNum__3',{'addr': "/MAG3/duty", "name": "Magnet 3", 'min':-100, 'max': 100})
+
+        self.led = 0
+        self.magnet_polarity = {0: 0b0000, 1: 0b1100, -1: 0b0011}
+        self.magnet = {1: 0, 2: 0, 3: 0}
+
+        #self.set_feature('mic_mag__0',{'addr': "/MAG1/state", "name": "Zámek rotace"})
+        #self.set_feature('mic_mag__1',{'addr': "/MAG2/state", "name": "Zámek X"})
+        #self.set_feature('mic_mag__2',{'addr': "/MAG3/state", "name": "Zámek Y"})
+
+        self.set_feature('external',{'feature': __file__+".feature.hbs"})
+
+        rate = rospy.Rate(10)
+        rospy.Subscriber("/led/set", std_msgs.msg.String, self.set_led_msg)
+        rospy.Subscriber("/MAG1/duty", std_msgs.msg.String, self.magnet1)
+        rospy.Subscriber("/MAG2/duty", std_msgs.msg.String, self.magnet2)
+        rospy.Subscriber("/MAG3/duty", std_msgs.msg.String, self.magnet3)
+
+        rospy.Subscriber("/magnet/set", microscope_magnet, self.set_magnet)
+
+        ##self.pymlab(device="i2cpwm", method="set_ls0", parameters=str(0b11111111))
+        #self.pymlab(device="i2cpwmB", method="set_ls1", parameters=str(dict(mode = 0b11111111)))
+        #self.pymlab(device="i2cpwmB", method="set_pwm1", parameters=str(dict(frequency = 100, duty = 50)))
+
+        self.init_motor()
+        self.init_mag()
+
+        while not rospy.is_shutdown():
+            rate.sleep()
+            self.send_motor_state()
+            self.send_mag_state()
+            #self.motor_x.Move(units = 12000, direction = 0, wait = True)
+            #self.motor_x.Move(units = 12000, direction = 1, wait = True)
+
+    def set_magnet(self, msg):
+        print("setMagnet", msg)
+        if msg.axis == 1:
+            if msg.state:
+                print("START B0")
+                self.pymlab(device="i2cpwmB", method="set_ls0", parameters=str(dict(mode = 0b0000100)))
+                self.magnet[1] = True
+            else:
+                print("STOP B0")
+                self.pymlab(device="i2cpwmB", method="set_ls0", parameters=str(dict(mode = 0b00000001)))
+                time.sleep(0.5)
+                self.pymlab(device="i2cpwmB", method="set_ls0", parameters=str(dict(mode = 0b00000000)))
+                self.magnet[1] = True
+                
+        elif msg.axis == 2:
+            if msg.state:
+                print("START B1")
+                self.pymlab(device="i2cpwmB", method="set_ls1", parameters=str(dict(mode = 0b00001100)))
+                self.magnet[2] = True
+            else:
+                print("STOP B1")
+                self.pymlab(device="i2cpwmB", method="set_ls1", parameters=str(dict(mode = 0b00000011)))
+                time.sleep(0.5)
+                self.pymlab(device="i2cpwmB", method="set_ls1", parameters=str(dict(mode = 0b00000000)))
+                self.magnet[2] = True
+
+        elif msg.axis == 3:
+            if msg.state:
+                print("START B1")
+                self.pymlab(device="i2cpwmA", method="set_ls1", parameters=str(dict(mode = 0b00001100)))
+                self.magnet[3] = True
+            else:
+                print("STOP B1")
+                self.pymlab(device="i2cpwmA", method="set_ls1", parameters=str(dict(mode = 0b00000011)))
+                time.sleep(0.5)
+                self.pymlab(device="i2cpwmA", method="set_ls1", parameters=str(dict(mode = 0b00000000)))
+                self.magnet[3] = True
+
+    def init_mag(self):
+        self.pymlab(device="i2cpwmA", method="set_ls0", parameters=str(dict(mode = 0b00000000)))
+        self.pymlab(device="i2cpwmA", method="set_ls1", parameters=str(dict(mode = 0b00000000)))
+        self.pymlab(device="i2cpwmA", method="set_pwm0", parameters=str(dict(frequency = 100, duty = 0)))
+        self.pymlab(device="i2cpwmA", method="set_pwm1", parameters=str(dict(frequency = 100, duty = 50)))
+
+        self.pymlab(device="i2cpwmB", method="set_ls0", parameters=str(dict(mode = 0b00000000)))
+        self.pymlab(device="i2cpwmB", method="set_ls1", parameters=str(dict(mode = 0b00000000)))
+        self.pymlab(device="i2cpwmB", method="set_pwm0", parameters=str(dict(frequency = 100, duty = 50)))
+        self.pymlab(device="i2cpwmB", method="set_pwm1", parameters=str(dict(frequency = 100, duty = 50)))
+
+        self.led0 = 0
+        self.magnet1 = 0
+        self.magnet2 = 0
+        self.magnet3 = 0
+
+    def set_led_msg(self, msg):
+        print(msg)
+        self.set_led(float(msg.data))
+
+    def set_led(self, duty = 0):
+        if duty <= 0:
+            print("Off")
+            self.pymlab(device="i2cpwmA", method="set_ls0", parameters=str(dict(mode = 0b00000001)))
+        elif duty >= 100:
+            print("FULL")
+            self.pymlab(device="i2cpwmA", method="set_ls0", parameters=str(dict(mode = 0b00000000)))
+        else:
+            print("PWM")
+            self.pymlab(device="i2cpwmA", method="set_pwm0", parameters=str(dict(frequency = 100, duty = 100-duty)))
+            self.pymlab(device="i2cpwmA", method="set_ls0", parameters=str(dict(mode = 0b00000010)))
+
+
+    def callback(self, recive):
+        print "led", recive
+        self.pymlab(device="i2cpwmB", method="set_pwm1", parameters=str(dict(frequency = 100, duty = 100 - int(recive.data))))
+
+    def send_motor_state(self):
+            aray = []
+
+            a1 = microscope_motor()
+            a1.axis = 1
+            a1.relative = False
+            a1.position = self.mx_pos
+            aray += [a1]
+
+            a2 = microscope_motor()
+            a2.axis = 2
+            a2.relative = False
+            a2.position = self.my_pos
+            aray += [a2] 
+
+            a3 = microscope_motor()
+            a3.axis = 3
+            a3.relative = False
+            a3.position = self.mz_pos
+            aray += [a3]
+
+            a4 = microscope_motor()
+            a4.axis = 4
+            a4.relative = False
+            a4.position = self.mo_pos
+            aray += [a4]
+
+            self.axis_state.publish(motor=aray)
+
+
+    def send_mag_state(self):
+            aray = []
+
+            a1 = microscope_magnet()
+            a1.axis = 1
+            a1.state = bool(self.magnet[1])
+            aray += [a1]
+
+            a2 = microscope_magnet()
+            a2.axis = 2
+            a2.state = bool(self.magnet[2])
+            aray += [a2] 
+
+            a3 = microscope_magnet()
+            a3.axis = 3
+            a3.state = bool(self.magnet[3])
+            aray += [a3]
+
+            self.magnet_state.publish(magnet=aray)
+
+
+    def magnet1(self, recive):
+        print "magnet1", recive
+        if int(recive.data) < 0:
+            duty = abs(int(recive.data))
+            self.pymlab(device="i2cpwmA", method="set_ls0", parameters=str(dict(mode = 0b10000000)))
+            time.sleep(0.1)
+            self.pymlab(device="i2cpwmA", method="set_pwm0", parameters=str(dict(frequency = 100, duty = duty)))
+            print duty
+        else:
+            duty = abs(int(recive.data))
+            self.pymlab(device="i2cpwmA", method="set_ls0", parameters=str(dict(mode = 0b00100000)))
+            time.sleep(0.1)
+            self.pymlab(device="i2cpwmA", method="set_pwm0", parameters=str(dict(frequency = 100, duty = duty)))
+            print duty
+
+    def magnet2(self, recive):
+        print "magnet2", recive
+        if int(recive.data) < 0:
+            duty = abs(int(recive.data))
+            self.pymlab(device="i2cpwmA", method="set_ls1", parameters=str(dict(mode = 0b11000000)))
+            time.sleep(0.1)
+            self.pymlab(device="i2cpwmA", method="set_pwm1", parameters=str(dict(frequency = 100, duty = duty)))
+            print duty
+        else:
+            duty = abs(int(recive.data))
+            self.pymlab(device="i2cpwmA", method="set_ls1", parameters=str(dict(mode = 0b00110000)))
+            time.sleep(0.1)
+            self.pymlab(device="i2cpwmA", method="set_pwm1", parameters=str(dict(frequency = 100, duty = duty)))
+            print duty
+
+    def magnet3(self, recive):
+        print "magnet3", recive
+        if int(recive.data) < 0:
+            duty = abs(int(recive.data))
+            self.pymlab(device="i2cpwmB", method="set_ls0", parameters=str(dict(mode = 0b10000000)))
+            time.sleep(0.1)
+            self.pymlab(device="i2cpwmB", method="set_pwm0", parameters=str(dict(frequency = 100, duty = duty)))
+            #print duty
+        else:
+            duty = abs(int(recive.data))
+            self.pymlab(device="i2cpwmB", method="set_ls0", parameters=str(dict(mode = 0b00100000)))
+            time.sleep(0.1)
+            self.pymlab(device="i2cpwmB", method="set_pwm0", parameters=str(dict(frequency = 100, duty = duty)))
+            print duty
+
+    def init_motor(self):
+        self.motor_x = axis.axis(SPI = self.pymlab, SPI_CS = 0b0001, Direction = True, StepsPerUnit = 1, protocol = 'arom', arom_spi_name = 'spi')
+        self.motor_x.Setup(
+                       MAX_SPEED = 600,
+                       KVAL_ACC=0.5,
+                       KVAL_RUN=0.5,
+                       KVAL_DEC=0.5,
+                       ACC = 100,
+                       DEC = 100,
+                       FS_SPD=3000,
+                       STEP_MODE=axis.axis.STEP_MODE_FULL)
+        
+
+        self.motor_y = axis.axis(SPI = self.pymlab, SPI_CS = 0b0010, Direction = True, StepsPerUnit = 1, protocol = 'arom', arom_spi_name = 'spi')
+        self.motor_y.Setup(
+                       MAX_SPEED = 500,
+                       KVAL_ACC=0.5,
+                       KVAL_RUN=0.5,
+                       KVAL_DEC=0.5,
+                       ACC = 100,
+                       DEC = 100,
+                       FS_SPD=3000,
+                       STEP_MODE=axis.axis.STEP_MODE_FULL)
+        #self.motor_y.Run(0, 200)
+
+
+        #'''
+        self.motor_z = axis.axis(SPI = self.pymlab, SPI_CS = 0b0100, Direction = True, StepsPerUnit = 1, protocol = 'arom', arom_spi_name = 'spi')
+        self.motor_z.Setup(
+                       MAX_SPEED = 500,
+                       KVAL_ACC=0.5,
+                       KVAL_RUN=0.5,
+                       KVAL_DEC=0.5,
+                       ACC = 100,
+                       DEC = 100,
+                       FS_SPD=3000,
+                       STEP_MODE=axis.axis.STEP_MODE_FULL)
+        #self.motor_z.Run(1, 200)
+        #'''
+
+        #'''
+        self.motor_o = axis.axis(SPI = self.pymlab, SPI_CS = 0b1000, Direction = True, StepsPerUnit = 1, protocol = 'arom', arom_spi_name = 'spi')
+        self.motor_o.Setup(
+                       MAX_SPEED = 500,
+                       KVAL_ACC=0.5,
+                       KVAL_RUN=0.5,
+                       KVAL_DEC=0.5,
+                       ACC = 100,
+                       DEC = 100,
+                       FS_SPD=3000,
+                       STEP_MODE=axis.axis.STEP_MODE_FULL)
+        #self.motor_o.Run(1, 200)
+        #'''
+
+        self.mx_pos = 0
+        self.my_pos = 0
+        self.mz_pos = 0
+        self.mo_pos = 0
+
+
+
+
+
+if __name__ == '__main__':
+    m = Mikroskop()
+
