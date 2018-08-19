@@ -96,13 +96,47 @@ module body2() {
 	}
 }
 
+
+
+
+
+// Parametry připevnění k mikroskopu
+vzd = 4;  // Vzdálenost dírek na šroubek od středu
+Rsroubek = 2; // Poloměr díry na šroubek
+
+Rvalec = 7;   // Poloměr vnitřní díry na hřídel v mikroskopu (se šroubky)
+Hvalec = 14;  // Výška válce na hřídel v mikroskopu
+
+
+difference() {
+    union() {
+
+
 body1();
 translate([0,0,H1]) rotate([0,180,0]) body2();
 for (i=[1:n]){
 	rotate([0,0,360*i/n]) translate ([0,0,H2]) sq_spring(Ri+5.5,Re,Hspring,120);
 }
+// Válec u mikroskopu
+translate([0,0,H1]) cylinder(r = Re, h = Hvalec, center = false);
+}
+// Vnitřní strana dutého válce u mikroskopu
+translate([0,0, H1]) cylinder(r = Rvalec, h = 20, center = false);
 
-//V mikroskopu
+// Dírky na šroubky
+translate([0,vzd, H1-4+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
+rotate(120) translate([0,vzd, H1-4+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
+rotate(240) translate([0,vzd, H1-4+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
+
+}
+
+
+
+
+
+
+
+/* //V mikroskopu
 dv = 13; // Vnější průměr trubky
 dd = 9; // Vnitrřní průměr trubky (průměr díry)
 hm = 20; //Výška válce do mikroskopu
