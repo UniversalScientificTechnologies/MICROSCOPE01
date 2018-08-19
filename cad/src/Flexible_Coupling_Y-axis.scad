@@ -115,7 +115,7 @@ difference() {
 body1();
 translate([0,0,H1]) rotate([0,180,0]) body2();
 for (i=[1:n]){
-	rotate([0,0,360*i/n]) translate ([0,0,H2]) sq_spring(Ri+5.5,Re,Hspring,120);
+	rotate([0,0,360*i/n]) translate ([0,0,H2]) sq_spring(Re-3.5,Re,Hspring,120);
 }
 // Válec u mikroskopu
 translate([0,0,H1]) cylinder(r = Re, h = Hvalec, center = false);
