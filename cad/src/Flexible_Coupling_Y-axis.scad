@@ -107,7 +107,7 @@ module body2() {
 vzd = 5;  // Vzdálenost dírek na šroubek od středu
 Rsroubek = 1.45; // Poloměr díry na šroubek
 
-Dvalec = 17.6;   // Poloměr vnitřní díry na hřídel v mikroskopu (se šroubky)
+Dvalec = 17.6;   // Průměr vnitřní díry na hřídel v mikroskopu (se šroubky)
 Hvalec = 25;  // Výška válce na hřídel v mikroskopu
 
 Rvalec = Dvalec/2;
@@ -135,29 +135,3 @@ rotate(240) translate([0,vzd, H1-HB2+0.3]) cylinder(r = Rsroubek, h = 6, center 
 
 }
 
-
-
-
-
-
-
-/* //V mikroskopu
-dv = 13; // Vnější průměr trubky
-dd = 9; // Vnitrřní průměr trubky (průměr díry)
-hm = 20; //Výška válce do mikroskopu
-
-// Zářez na čudlík
-zs = 2.2;  // Šířka zářezu
-zh = 5;  // Hloubka zářezu
-
-
-translate([0, 0, H1])
-difference() {
-cylinder(hm, dv/2, dv/2);
-
-translate([0,0, 1])
-cylinder(hm, dd/2, dd/2);
-
-translate([0,dd/2,hm])
-cube([zs,6,zh], center = true);
-}
