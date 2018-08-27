@@ -105,12 +105,12 @@ module body2() {
 
 // Parametry připevnění k mikroskopu
 vzd = 5;  // Vzdálenost dírek na šroubek od středu
-Rsroubek = 1.2; // Poloměr díry na šroubek
+Rsroubek = 1.35; // Poloměr díry na šroubek
 
-Rvalec = 9;   // Poloměr vnitřní díry na hřídel v mikroskopu (se šroubky)
+Dvalec = 17.45;   // Poloměr vnitřní díry na hřídel v mikroskopu (se šroubky)
 Hvalec = 25;  // Výška válce na hřídel v mikroskopu
 
-
+Rvalec = Dvalec/2;
 
 
 difference() {
