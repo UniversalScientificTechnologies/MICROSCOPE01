@@ -29,7 +29,7 @@ N  = 9.4;
 D3 = 3.5;
 
 // NUT HOLE DIAMETER
-Dnut=6.6;
+Dnut=7.2;
 
 // NUT HOLE THICKNESS
 Hnut=3.4;
@@ -105,9 +105,9 @@ module body2() {
 
 // Parametry připevnění k mikroskopu
 vzd = 5;  // Vzdálenost dírek na šroubek od středu
-Rsroubek = 1.35; // Poloměr díry na šroubek
+Rsroubek = 1.45; // Poloměr díry na šroubek
 
-Dvalec = 17.45;   // Poloměr vnitřní díry na hřídel v mikroskopu (se šroubky)
+Dvalec = 17.6;   // Poloměr vnitřní díry na hřídel v mikroskopu (se šroubky)
 Hvalec = 25;  // Výška válce na hřídel v mikroskopu
 
 Rvalec = Dvalec/2;

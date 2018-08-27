@@ -11,10 +11,13 @@ D2 = 5.5;
 D2B = 0;
 
 // TOTAL HEIGHT
-H1 = 32;
+H1 = 31.5;
 
 // BASE HEIGHT
 H2 = 8;
+
+// Výška druhé (užší) podstavy
+HB2 = 3.5;
 
 // NUMBER OF FLEXIBLE ELEMENTS
 n = 6;
@@ -26,7 +29,7 @@ N  = 9.4;
 D3 = 3.5;
 
 // NUT HOLE DIAMETER
-Dnut=6.5;
+Dnut=7.1;
 
 // NUT HOLE THICKNESS
 Hnut=3.4;
@@ -49,7 +52,7 @@ fn = 4*N;	// default face number for cylinders
 R3 = D3/2;	// screw hole radius
 Rnut=Dnut/2;	// nut hole radius
 B2 = B-Ri;	// flat face distance from center
-Hspring=H1-H2-4;
+Hspring=H1-H2-HB2;
 
 module sq_spring(in_R,out_R,height,rot) {
 	width=out_R-in_R;
@@ -87,8 +90,8 @@ module body2() {
 	difference() {
 		union() {
 			difference(){
-				cylinder (r=Re,h=4,center=false, $fn=fn);
-				cylinder(r=Ri2,h=4,center=false, $fn=fn);
+				cylinder (r=Re,h=HB2,center=false, $fn=fn);
+				cylinder(r=Ri2,h=HB2,center=false, $fn=fn);
 				}
 			translate([B2,-Ri2,0]) cube(size=[Ri2,2*Ri2,H2], center=false);
 		}
@@ -99,17 +102,17 @@ module body2() {
 body1();
 translate([0,0,H1]) rotate([0,180,0]) body2();
 for (i=[1:n]){
-	rotate([0,0,360*i/n]) translate ([0,0,H2]) sq_spring(Ri+5.5,Re,Hspring,120);
+	rotate([0,0,360*i/n]) translate ([0,0,H2]) sq_spring(Re-3.5,Re,Hspring,120);
 }
 
 //V mikroskopu
 dv = 13; // Vnější průměr trubky
 dd = 9; // Vnitrřní průměr trubky (průměr díry)
-hm = 20; //Výška válce do mikroskopu
+hm = 21.5; //Výška válce do mikroskopu
 
 // Zářez na čudlík
 zs = 2.2;  // Šířka zářezu
-zh = 5;  // Hloubka zářezu
+zh = 7.5;  // Hloubka zářezu
 
 
 translate([0, 0, H1])
