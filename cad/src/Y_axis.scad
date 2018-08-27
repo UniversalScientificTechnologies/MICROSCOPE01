@@ -9,7 +9,9 @@ TLS = 2;   // Tloušťka stěn válce
 // U mikroskopu
 DMi = 49;   // Vnější průměr válce pro připevnění k mikroskopu
 HMiPod = 3;  // Tloušťka podstavy u mikroskopu
-DMiVni = 29;  //  Vnitřní průměr podstavy pro uchycení k mikroskopu
+DMiVni = 29;  //  Vnitřní průměr disku pro uchycení k mikroskopu
+rozmi = 27;  // Rozteč šroubů u mikroskopu
+dsmi = 3.5;  // Průměr šroubů od mikroskopu
 
 // U motoru
 DMo = 78;  // Průměr disku pro uchycení motoru
@@ -38,7 +40,7 @@ module teleso(){
 difference(){
 teleso();
     
-    translate([0,0,HC-HMiPod])
+    translate([0,0,HC-HMiPod+0.3])
     cylinder(h = HMiPod +1, r = DMiVni/2);
     
   // Otvory na šroubky motoru 
@@ -61,5 +63,24 @@ teleso();
         cylinder(10, dsm/2, dsm/2);
     translate([-rozm/2, -rozm/2, HMoPod-1])
         cylinder(30, dhm/2, dhm/2);
+    
+ // Otvory na šroubky k mikroskopu
+    translate([rozmi/2, rozmi/2, HC-HMiPod+0.3])
+        cylinder(10, dsmi/2, dsmi/2);
+    
+    rotate(90) translate([rozmi/2, rozmi/2, HC-HMiPod+0.3])
+        cylinder(10, dsmi/2, dsmi/2);
+        
+    rotate(180) translate([rozmi/2, rozmi/2, HC-HMiPod+0.3])
+        cylinder(10, dsmi/2, dsmi/2);
+    
+    rotate(270) translate([rozmi/2, rozmi/2, HC-HMiPod+0.3])
+        cylinder(10, dsmi/2, dsmi/2);
+        
+  // Díra na přístup ke spojce
+    translate([50,0,HC/4]){hull(){
+            rotate([0,-90,0]) cylinder(h=100, d=12);
+            translate([0,0,HC/2]) rotate([0,-90,0]) cylinder(h=100, d=12);
+    }}
     
 }
