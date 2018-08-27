@@ -2,7 +2,7 @@
 // modified by rdklein to use two different inner diameters
 
 // OUTER DIAMETER
-D1 = 25;
+D1 = 23;
 
 // INNER DIAMETER 1
 D2 = 8.5;
@@ -15,6 +15,9 @@ H1 = 32;
 
 // BASE HEIGHT
 H2 = 8;
+
+// Výška druhé (užší) podstavy
+HB2 = 1.5;
 
 // NUMBER OF FLEXIBLE ELEMENTS
 n = 6;
@@ -49,7 +52,7 @@ fn = 4*N;	// default face number for cylinders
 R3 = D3/2;	// screw hole radius
 Rnut=Dnut/2;	// nut hole radius
 B2 = B-Ri;	// flat face distance from center
-Hspring=H1-H2-4;
+Hspring=H1-H2-HB2;
 
 module sq_spring(in_R,out_R,height,rot) {
 	width=out_R-in_R;
@@ -87,8 +90,8 @@ module body2() {
 	difference() {
 		union() {
 			difference(){
-				cylinder (r=Re,h=4,center=false, $fn=fn);
-				cylinder(r=Ri2,h=4,center=false, $fn=fn);
+				cylinder (r=Re,h=HB2,center=false, $fn=fn);
+				cylinder(r=Ri2,h=HB2,center=false, $fn=fn);
 				}
 			translate([B2,-Ri2,0]) cube(size=[Ri2,2*Ri2,H2], center=false);
 		}
@@ -101,11 +104,13 @@ module body2() {
 
 
 // Parametry připevnění k mikroskopu
-vzd = 4;  // Vzdálenost dírek na šroubek od středu
-Rsroubek = 2; // Poloměr díry na šroubek
+vzd = 5;  // Vzdálenost dírek na šroubek od středu
+Rsroubek = 1.2; // Poloměr díry na šroubek
 
-Rvalec = 7;   // Poloměr vnitřní díry na hřídel v mikroskopu (se šroubky)
-Hvalec = 14;  // Výška válce na hřídel v mikroskopu
+Rvalec = 9;   // Poloměr vnitřní díry na hřídel v mikroskopu (se šroubky)
+Hvalec = 25;  // Výška válce na hřídel v mikroskopu
+
+
 
 
 difference() {
@@ -121,12 +126,12 @@ for (i=[1:n]){
 translate([0,0,H1]) cylinder(r = Re, h = Hvalec, center = false);
 }
 // Vnitřní strana dutého válce u mikroskopu
-translate([0,0, H1]) cylinder(r = Rvalec, h = 20, center = false);
+translate([0,0, H1]) cylinder(r = Rvalec, h = Hvalec+1, center = false);
 
 // Dírky na šroubky
-translate([0,vzd, H1-4+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
-rotate(120) translate([0,vzd, H1-4+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
-rotate(240) translate([0,vzd, H1-4+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
+translate([0,vzd, H1-HB2+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
+rotate(120) translate([0,vzd, H1-HB2+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
+rotate(240) translate([0,vzd, H1-HB2+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
 
 }
 
