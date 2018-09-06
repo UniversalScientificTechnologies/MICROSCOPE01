@@ -5,7 +5,7 @@
 D1 = 23;
 
 // INNER DIAMETER 1
-D2 = 8.5;
+D2 = 6.5;
 
 // INNER DIAMETER 2
 D2B = 0;
@@ -107,7 +107,7 @@ module body2() {
 vzd = 5;  // Vzdálenost dírek na šroubek od středu
 Rsroubek = 1.45; // Poloměr díry na šroubek
 
-Dvalec = 17.6;   // Průměr vnitřní díry na hřídel v mikroskopu (se šroubky)
+Dvalec = 17.7;   // Průměr vnitřní díry na hřídel v mikroskopu (se šroubky)
 Hvalec = 25;  // Výška válce na hřídel v mikroskopu
 
 Rvalec = Dvalec/2;
