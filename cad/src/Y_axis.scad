@@ -4,7 +4,7 @@ $fn=100;
 /// Parametry
 
 
-TLS = 2;   // Tloušťka stěn válce
+TLS = 3;   // Tloušťka stěn válce
 
 // U mikroskopu
 DMi = 49;   // Vnější průměr válce pro připevnění k mikroskopu
