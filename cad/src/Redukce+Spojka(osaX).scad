@@ -5,7 +5,7 @@
 D1 = 25;
 
 // INNER DIAMETER 1
-D2 = 8.4;
+D2 = 6.85;
 
 // INNER DIAMETER 2
 D2B = 0;
@@ -76,7 +76,7 @@ module body1() {
 		union() {
 			difference(){
 				cylinder (r=Re,h=H2,center=false, $fn=fn);
-				cylinder(r=Ri,h=H2-1,center=false, $fn=fn);
+				cylinder(r=Ri,h=H2-0.2,center=false, $fn=fn);
 				}
 			translate([B2,-Ri,0]) cube(size=[Ri,2*Ri,H2], center=false);
 		}
