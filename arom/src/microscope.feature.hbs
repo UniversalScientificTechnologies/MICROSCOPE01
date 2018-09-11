@@ -8,82 +8,84 @@
 </style>
 
 
-<div class="col-12 row">
+<div class="col-12 container">
 	<h2>Microscope control</h2>
 
-	<div>
-	<table>
-		<tr>
-			<td><button class="btn btn-sm btn-microscope-control">R-</button></td>
-			<td><button class="btn btn-sm btn-microscope-control">Y+</button></td>
-			<td><button class="btn btn-sm btn-microscope-control">R+</button></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td><button class="btn btn-sm btn-microscope-control">X+</button></td>
-			<td><button class="btn btn-sm btn-microscope-control">H</button></td>
-			<td><button class="btn btn-sm btn-microscope-control">X-</button></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td><button class="btn btn-sm btn-microscope-control">Y-</button></td>
-			<td></td>
-		</tr>
-	</table>
+	<div class="row">
+		<div class="col">
+			<table>
+				<tr>
+					<td><button class="btn btn-sm btn-microscope-control">R-</button></td>
+					<td><button class="btn btn-sm btn-microscope-control">Y+</button></td>
+					<td><button class="btn btn-sm btn-microscope-control">R+</button></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><button class="btn btn-sm btn-microscope-control">X+</button></td>
+					<td><button class="btn btn-sm btn-microscope-control">H</button></td>
+					<td><button class="btn btn-sm btn-microscope-control">X-</button></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><button class="btn btn-sm btn-microscope-control">Y-</button></td>
+					<td></td>
+				</tr>
+			</table>
 
 
-	<div class="btn-group" role="group" aria-label="Basic example">
-	  <button type="button" class="btn btn-outline-success btn-microscope-distance">0.1 mm</button>
-	  <button type="button" class="btn btn-outline-success btn-microscope-distance">1 mm</button>
-	  <button type="button" class="btn btn-outline-success btn-microscope-distance">10 mm</button>
-	</div>
+			<div class="btn-group" role="group" aria-label="Basic example">
+			  <button type="button" class="btn btn-outline-success btn-microscope-distance">0.1 mm</button>
+			  <button type="button" class="btn btn-outline-success btn-microscope-distance">1 mm</button>
+			  <button type="button" class="btn btn-outline-success btn-microscope-distance">10 mm</button>
+			</div>
 
-	</div>
-
-	<div>
-		<table>
-			<tr><td><button class="btn btn-sm btn-microscope-control">Z+</button></td></tr>
-			<tr><td><button class="btn btn-sm btn-microscope-control">H</button></td></tr>
-			<tr><td><button class="btn btn-sm btn-microscope-control">Z-</button></td></tr>
-		</table>
-
-		<div class="btn-group" role="group" aria-label="Basic example">
-		  <button type="button" class="btn btn-outline-success btn-microscope-distances-z">0.1 mm</button>
-		  <button type="button" class="btn btn-outline-success btn-microscope-distances-z">1 mm</button>
-		  <button type="button" class="btn btn-outline-success btn-microscope-distances-z">10 mm</button>
 		</div>
-	</div>
+
+		<div class="col">
+			<table>
+				<tr><td><button class="btn btn-sm btn-microscope-control">Z+</button></td></tr>
+				<tr><td><button class="btn btn-sm btn-microscope-control">H</button></td></tr>
+				<tr><td><button class="btn btn-sm btn-microscope-control">Z-</button></td></tr>
+			</table>
+
+			<div class="btn-group" role="group" aria-label="Basic example">
+			  <button type="button" class="btn btn-outline-success btn-microscope-distances-z">0.1 mm</button>
+			  <button type="button" class="btn btn-outline-success btn-microscope-distances-z">1 mm</button>
+			  <button type="button" class="btn btn-outline-success btn-microscope-distances-z">10 mm</button>
+			</div>
+		</div>
 
 
-	<div>
-		<table>
-			<tr><td>XY</td><td>
-				<div class="btn-group btn-group-justified" role="group" aria-label="Basic example">
-				  <button type="button" class="btn btn-outline-success btn-microscope-magnet mag1 state-1" onclick="setMag(1, 1)">Sepnout</button>
-				  <button type="button" class="btn btn-outline-danger btn-microscope-magnet mag1 state-0" onclick="setMag(1, 0)">Rozepnout</button>
-				</div>
-			</td></tr>
-			<tr><td>Rot</td><td>
-				<div class="btn-group btn-group-justified" role="group" aria-label="Basic example">
-				  <button type="button" class="btn btn-outline-success btn-microscope-magnet mag2 state-1" onclick="setMag(2, 1)">Sepnout</button>
-				  <button type="button" class="btn btn-outline-danger btn-microscope-magne mag2 state-0" onclick="setMag(2, 0)">Rozepnout</button>
-				</div>
-			</td></tr>
-			<tr><td>Break</td><td>
-				<div class="btn-group btn-group-justified" role="group" aria-label="Basic example">
-				  <button type="button" class="btn btn-outline-success btn-microscope-magnet mag3 state-1" onclick="setMag(3, 1)">Sepnout</button>
-				  <button type="button" class="btn btn-outline-danger btn-microscope-magnet mag3 state-0" onclick="setMag(3, 0)">Rozepnout</button>
-				</div>
-			</td></tr>
-			<tr><td>Světlo</td><td>
-				<!-- <div class="btn-group" role="group" aria-label="Basic example">
-				  <button type="button" class="btn btn-outline-success btn-microscope-magnet">Rozsvítit</button>
-				  <button type="button" class="btn btn-outline-danger btn-microscope-magnet">Zasnout</button>
-				</div> -->
-				<input type="range" name="">
-				<input type="number" name="">
-			</td></tr>
-		</table>
+		<div class="col">
+			<table >
+				<tr><td>XY</td><td>
+					<div class="btn-group btn-group-justified" role="group" aria-label="Basic example">
+					  <button type="button" class="btn btn-outline-success btn-microscope-magnet mag1 state-1" onclick="setMag(1, 1)">Sepnout</button>
+					  <button type="button" class="btn btn-outline-danger btn-microscope-magnet mag1 state-0" onclick="setMag(1, 0)">Rozepnout</button>
+					</div>
+				</td></tr>
+				<tr><td>Rot</td><td>
+					<div class="btn-group btn-group-justified" role="group" aria-label="Basic example">
+					  <button type="button" class="btn btn-outline-success btn-microscope-magnet mag2 state-1" onclick="setMag(2, 1)">Sepnout</button>
+					  <button type="button" class="btn btn-outline-danger btn-microscope-magne mag2 state-0" onclick="setMag(2, 0)">Rozepnout</button>
+					</div>
+				</td></tr>
+				<tr><td>Break</td><td>
+					<div class="btn-group btn-group-justified" role="group" aria-label="Basic example">
+					  <button type="button" class="btn btn-outline-success btn-microscope-magnet mag3 state-1" onclick="setMag(3, 1)">Sepnout</button>
+					  <button type="button" class="btn btn-outline-danger btn-microscope-magnet mag3 state-0" onclick="setMag(3, 0)">Rozepnout</button>
+					</div>
+				</td></tr>
+				<tr><td>Světlo</td><td>
+					<!-- <div class="btn-group" role="group" aria-label="Basic example">
+					  <button type="button" class="btn btn-outline-success btn-microscope-magnet">Rozsvítit</button>
+					  <button type="button" class="btn btn-outline-danger btn-microscope-magnet">Zasnout</button>
+					</div> -->
+					<input type="range" id="led_val_slider" min=0 max=100 onchange="setLed()">
+					<input type="number" name="">
+				</td></tr>
+			</table>
+		</div>
 	</div>
 
 </div>
@@ -127,6 +129,19 @@
 		var msg = new ROSLIB.Message({
 		    axis: mag,
 			state: Boolean(value)
+		});
+	    sendCtrl.publish(msg);
+	}
+
+
+	function setLed(value = 0){
+		var sendCtrl = new ROSLIB.Topic({
+			ros : ros,
+			name : '/led/set',
+			messageType : 'std_msgs/String'
+		});
+		var msg = new ROSLIB.Message({
+		    data: $("#led_val_slider").val()
 		});
 	    sendCtrl.publish(msg);
 	}
