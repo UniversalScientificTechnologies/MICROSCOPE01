@@ -12,9 +12,6 @@ from arom_helper import AromNode
 
 
 '''
-
-
-
 PWM-A
     PWM 0 LED
     PWM 1 BREAK
@@ -22,10 +19,18 @@ PWM-A
 PWM-B
     PWM 0 XY
     PWM 1 O
+'''
+
 
 
 '''
+##
 
+Osa O - 197 164 st. - mikrokrokovani 1/64
+Osa O - 394 328 st. - mikrokrokovani 1/128
+
+
+'''
 
 class Mikroskop(AromNode):
     node_name = "Mikroskop"
@@ -33,17 +38,21 @@ class Mikroskop(AromNode):
     node_pymlab = True
 
     def __init__(self, name = "Mikroskop"):
+
+      #  Nastaveni ODESILANI ZPRAV z nodu Mikroskop do jinych nodu
       #  self.pub_btn = rospy.Publisher('/arom/UI/buttons', std_msgs.msg.String, queue_size=10)
       #  self.pub_beep = rospy.Publisher('/beeper/preset', std_msgs.msg.String, queue_size=5)
         self.axis_state = rospy.Publisher('/axis/state', state_microscope_motor, queue_size=5, latch=True)
         self.magnet_state = rospy.Publisher('/magnet/state', state_microscope_magnet, queue_size=5, latch=True)
 
+        # Inicializace sbernice
         AromNode.__init__(self)
         #self.set_feature('sendNum__0',{'addr': "/LED/duty", "name": "LED", 'type': "range", 'min':0, 'max': 100})  #tady se nastaví "feature" pro webove rozhrani (tedy jaky ovladaci prvek se zobrazi)
         #self.set_feature('sendNum__1',{'addr': "/MAG1/duty", "name": "Magnet 1", 'min':-100, 'max': 100})
         #self.set_feature('sendNum__2',{'addr': "/MAG2/duty", "name": "Magnet 2", 'min':-100, 'max': 100})
         #self.set_feature('sendNum__3',{'addr': "/MAG3/duty", "name": "Magnet 3", 'min':-100, 'max': 100})
-
+        
+        #Pomocne promenne
         self.led = 0
         self.magnet_polarity = {0: 0b0000, 1: 0b1100, -1: 0b0011}
         self.magnet = {1: 0, 2: 0, 3: 0}
@@ -52,23 +61,29 @@ class Mikroskop(AromNode):
         #self.set_feature('mic_mag__1',{'addr': "/MAG2/state", "name": "Zámek X"})
         #self.set_feature('mic_mag__2',{'addr': "/MAG3/state", "name": "Zámek Y"})
 
+        # Co se zobrazi na webu je uvedeno v souboru microscope.feature.hbs
         self.set_feature('external',{'feature': __file__+".feature.hbs"})
 
-        rate = rospy.Rate(10)
+        # Nastaveni PRIJMU ZPRAV z uvedenych adres nodu (Subscriber prirazuje fci na konci jako parametr prichozi zpravu, self odkazuje na tuto jednu tridu (Mikroskop))
         rospy.Subscriber("/led/set", std_msgs.msg.String, self.set_led_msg)
         rospy.Subscriber("/MAG1/duty", std_msgs.msg.String, self.magnet1)
         rospy.Subscriber("/MAG2/duty", std_msgs.msg.String, self.magnet2)
         rospy.Subscriber("/MAG3/duty", std_msgs.msg.String, self.magnet3)
 
         rospy.Subscriber("/magnet/set", microscope_magnet, self.set_magnet)
+        rospy.Subscriber("/axis/set", microscope_motor, self.set_motor)
 
         ##self.pymlab(device="i2cpwm", method="set_ls0", parameters=str(0b11111111))
         #self.pymlab(device="i2cpwmB", method="set_ls1", parameters=str(dict(mode = 0b11111111)))
         #self.pymlab(device="i2cpwmB", method="set_pwm1", parameters=str(dict(frequency = 100, duty = 50)))
 
+        # Inicializace HW ovladace HBSTEP01B motorku a HW ovladace I2CPWM01A magnetu
         self.init_motor()
         self.init_mag()
 
+        # Nastaveni casovace (maximalni frekvence opakovani) pro nasledujici smycku
+        rate = rospy.Rate(1)
+        # Smycka spoustejici poslani zprav o stavu motorku a magnetu
         while not rospy.is_shutdown():
             rate.sleep()
             self.send_motor_state()
@@ -88,7 +103,7 @@ class Mikroskop(AromNode):
                 self.pymlab(device="i2cpwmB", method="set_ls0", parameters=str(dict(mode = 0b00000001)))
                 time.sleep(0.5)
                 self.pymlab(device="i2cpwmB", method="set_ls0", parameters=str(dict(mode = 0b00000000)))
-                self.magnet[1] = True
+                self.magnet[1] = False
                 
         elif msg.axis == 2:
             if msg.state:
@@ -100,7 +115,7 @@ class Mikroskop(AromNode):
                 self.pymlab(device="i2cpwmB", method="set_ls1", parameters=str(dict(mode = 0b00000011)))
                 time.sleep(0.5)
                 self.pymlab(device="i2cpwmB", method="set_ls1", parameters=str(dict(mode = 0b00000000)))
-                self.magnet[2] = True
+                self.magnet[2] = False
 
         elif msg.axis == 3:
             if msg.state:
@@ -112,7 +127,33 @@ class Mikroskop(AromNode):
                 self.pymlab(device="i2cpwmA", method="set_ls1", parameters=str(dict(mode = 0b00000011)))
                 time.sleep(0.5)
                 self.pymlab(device="i2cpwmA", method="set_ls1", parameters=str(dict(mode = 0b00000000)))
-                self.magnet[3] = True
+                self.magnet[3] = False
+
+    def set_motor(self, msg):
+        print("SetMotor", msg)
+        if msg.axis == 1:
+            ax = self.motor_x
+        elif msg.axis == 2:
+            ax = self.motor_y
+        elif msg.axis == 3:
+            ax = self.motor_z
+        elif msg.axis == 4:
+            ax = self.motor_o
+        else:
+            print("neznama osa - zastavuji vse!")
+            self.motor_x.Float()
+            self.motor_y.Float()
+            self.motor_z.Float()
+            self.motor_o.Float()
+            return None
+
+        if msg.speed_mode == 0:
+            ax.Float()
+            print("Zastavuji motor u osy", msg.axis)
+        else:
+            ax.Run(True, msg.speed_mode)
+            print("Spoustim motor u osy", msg.axis)
+        return None
 
     def init_mag(self):
         self.pymlab(device="i2cpwmA", method="set_ls0", parameters=str(dict(mode = 0b00000000)))
@@ -154,28 +195,43 @@ class Mikroskop(AromNode):
     def send_motor_state(self):
             aray = []
 
+            mx = self.motor_x.getStatus()
+            my = self.motor_y.getStatus()
+            mz = self.motor_z.getStatus()
+            mo = self.motor_o.getStatus()
+
+            print("")
+            print(mx)
+            print(my)
+            print(mz)
+            print(mo)
+
             a1 = microscope_motor()
             a1.axis = 1
             a1.relative = False
             a1.position = self.mx_pos
+            a1.speed_mode = 1
             aray += [a1]
 
             a2 = microscope_motor()
             a2.axis = 2
             a2.relative = False
             a2.position = self.my_pos
+            a2.speed_mode = 1
             aray += [a2] 
 
             a3 = microscope_motor()
             a3.axis = 3
             a3.relative = False
             a3.position = self.mz_pos
+            a3.speed_mode = 1
             aray += [a3]
 
             a4 = microscope_motor()
             a4.axis = 4
             a4.relative = False
             a4.position = self.mo_pos
+            a4.speed_mode = 1
             aray += [a4]
 
             self.axis_state.publish(motor=aray)
@@ -250,14 +306,14 @@ class Mikroskop(AromNode):
     def init_motor(self):
         self.motor_x = axis.axis(SPI = self.pymlab, SPI_CS = 0b0001, Direction = True, StepsPerUnit = 1, protocol = 'arom', arom_spi_name = 'spi')
         self.motor_x.Setup(
-                       MAX_SPEED = 600,
-                       KVAL_ACC=0.5,
-                       KVAL_RUN=0.5,
-                       KVAL_DEC=0.5,
-                       ACC = 100,
-                       DEC = 100,
+                       MAX_SPEED = 60,
+                       KVAL_ACC=0.2,
+                       KVAL_RUN=0.2,
+                       KVAL_DEC=0.2,
+                       ACC = 2,
+                       DEC = 2,
                        FS_SPD=3000,
-                       STEP_MODE=axis.axis.STEP_MODE_FULL)
+                       STEP_MODE=axis.axis.STEP_MODE_1_128)
         
 
         self.motor_y = axis.axis(SPI = self.pymlab, SPI_CS = 0b0010, Direction = True, StepsPerUnit = 1, protocol = 'arom', arom_spi_name = 'spi')
@@ -269,7 +325,7 @@ class Mikroskop(AromNode):
                        ACC = 100,
                        DEC = 100,
                        FS_SPD=3000,
-                       STEP_MODE=axis.axis.STEP_MODE_FULL)
+                       STEP_MODE=axis.axis.STEP_MODE_1_64)
         #self.motor_y.Run(0, 200)
 
 
@@ -283,7 +339,7 @@ class Mikroskop(AromNode):
                        ACC = 100,
                        DEC = 100,
                        FS_SPD=3000,
-                       STEP_MODE=axis.axis.STEP_MODE_FULL)
+                       STEP_MODE=axis.axis.STEP_MODE_1_64)
         #self.motor_z.Run(1, 200)
         #'''
 
@@ -291,15 +347,19 @@ class Mikroskop(AromNode):
         self.motor_o = axis.axis(SPI = self.pymlab, SPI_CS = 0b1000, Direction = True, StepsPerUnit = 1, protocol = 'arom', arom_spi_name = 'spi')
         self.motor_o.Setup(
                        MAX_SPEED = 500,
-                       KVAL_ACC=0.5,
-                       KVAL_RUN=0.5,
-                       KVAL_DEC=0.5,
+                       KVAL_ACC=0.4,
+                       KVAL_RUN=0.2,
+                       KVAL_DEC=0.4,
                        ACC = 100,
                        DEC = 100,
                        FS_SPD=3000,
-                       STEP_MODE=axis.axis.STEP_MODE_FULL)
-        #self.motor_o.Run(1, 200)
+                       STEP_MODE=axis.axis.STEP_MODE_1_128)
         #'''
+
+        self.motor_x.Float()
+        self.motor_y.Float()
+        self.motor_z.Float()
+        self.motor_o.Float()
 
         self.mx_pos = 0
         self.my_pos = 0

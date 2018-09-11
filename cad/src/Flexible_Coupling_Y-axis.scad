@@ -2,10 +2,10 @@
 // modified by rdklein to use two different inner diameters
 
 // OUTER DIAMETER
-D1 = 25;
+D1 = 23;
 
 // INNER DIAMETER 1
-D2 = 8.5;
+D2 = 6.5;
 
 // INNER DIAMETER 2
 D2B = 0;
@@ -15,6 +15,9 @@ H1 = 32;
 
 // BASE HEIGHT
 H2 = 8;
+
+// Výška druhé (užší) podstavy
+HB2 = 1.5;
 
 // NUMBER OF FLEXIBLE ELEMENTS
 n = 6;
@@ -26,7 +29,7 @@ N  = 9.4;
 D3 = 3.5;
 
 // NUT HOLE DIAMETER
-Dnut=6.6;
+Dnut=7.2;
 
 // NUT HOLE THICKNESS
 Hnut=3.4;
@@ -49,7 +52,7 @@ fn = 4*N;	// default face number for cylinders
 R3 = D3/2;	// screw hole radius
 Rnut=Dnut/2;	// nut hole radius
 B2 = B-Ri;	// flat face distance from center
-Hspring=H1-H2-4;
+Hspring=H1-H2-HB2;
 
 module sq_spring(in_R,out_R,height,rot) {
 	width=out_R-in_R;
@@ -87,8 +90,8 @@ module body2() {
 	difference() {
 		union() {
 			difference(){
-				cylinder (r=Re,h=4,center=false, $fn=fn);
-				cylinder(r=Ri2,h=4,center=false, $fn=fn);
+				cylinder (r=Re,h=HB2,center=false, $fn=fn);
+				cylinder(r=Ri2,h=HB2,center=false, $fn=fn);
 				}
 			translate([B2,-Ri2,0]) cube(size=[Ri2,2*Ri2,H2], center=false);
 		}
@@ -96,29 +99,39 @@ module body2() {
 	}
 }
 
+
+
+
+
+// Parametry připevnění k mikroskopu
+vzd = 5;  // Vzdálenost dírek na šroubek od středu
+Rsroubek = 1.45; // Poloměr díry na šroubek
+
+Dvalec = 17.7;   // Průměr vnitřní díry na hřídel v mikroskopu (se šroubky)
+Hvalec = 25;  // Výška válce na hřídel v mikroskopu
+
+Rvalec = Dvalec/2;
+
+
+difference() {
+    union() {
+
+
 body1();
 translate([0,0,H1]) rotate([0,180,0]) body2();
 for (i=[1:n]){
-	rotate([0,0,360*i/n]) translate ([0,0,H2]) sq_spring(Ri+5.5,Re,Hspring,120);
+	rotate([0,0,360*i/n]) translate ([0,0,H2]) sq_spring(Re-3.5,Re,Hspring,120);
+}
+// Válec u mikroskopu
+translate([0,0,H1]) cylinder(r = Re, h = Hvalec, center = false);
+}
+// Vnitřní strana dutého válce u mikroskopu
+translate([0,0, H1]) cylinder(r = Rvalec, h = Hvalec+1, center = false);
+
+// Dírky na šroubky
+translate([0,vzd, H1-HB2+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
+rotate(120) translate([0,vzd, H1-HB2+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
+rotate(240) translate([0,vzd, H1-HB2+0.3]) cylinder(r = Rsroubek, h = 6, center = false);
+
 }
 
-//V mikroskopu
-dv = 13; // Vnější průměr trubky
-dd = 9; // Vnitrřní průměr trubky (průměr díry)
-hm = 20; //Výška válce do mikroskopu
-
-// Zářez na čudlík
-zs = 2.2;  // Šířka zářezu
-zh = 5;  // Hloubka zářezu
-
-
-translate([0, 0, H1])
-difference() {
-cylinder(hm, dv/2, dv/2);
-
-translate([0,0, 1])
-cylinder(hm, dd/2, dd/2);
-
-translate([0,dd/2,hm])
-cube([zs,6,zh], center = true);
-}
