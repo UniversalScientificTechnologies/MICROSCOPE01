@@ -98,16 +98,16 @@ teleso();
   // Otvory na připevnění drátů
     translate([0,10+DMi/2,HC-12]){
         difference(){
-        cylinder(6,13.2,13.2);
+        cylinder(6,13.3,13.3);
         
-            cylinder(6,11.2,11.2);
+            cylinder(6,11.5,11.5);
         }}
         
         translate([0,10+DMi/2,HC/4]){
         difference(){
-        cylinder(6,13.2,13.2);
+        cylinder(6,13.3,13.3);
         
-            cylinder(6,11.2,11.2);
+            cylinder(6,11.5,11.5);
         }}
     
 }
