@@ -22,6 +22,9 @@ dsm = 5.5;  // Průměr šroubů od motoru
 dhm = 9;
 rozm = 47.14; // Rozteč šroubů u motoru
 
+HTun = 10; // Délka tunelu na hlavy šroubů unvitř dílu
+RTun = 3.5;  // Poloměr tunelu na hlavy šroubů unvitř dílu
+
 HC = 46 + HMiPod + 36;      // Celková výška dílu
 
 
@@ -68,20 +71,43 @@ teleso();
  // Otvory na šroubky k mikroskopu
     translate([rozmi1/2, rozmi2/2, HC-HMiPod+0.2])
         cylinder(10, dsmi/2, dsmi/2);
-    
-    rotate(90) translate([rozmi2/2, rozmi1/2, HC-HMiPod+0.2])
-        cylinder(10, dsmi/2, dsmi/2);
+      translate([rozmi1/2, rozmi2/2, HC-HMiPod-HTun])
+        cylinder(HTun, RTun, RTun);
         
-    rotate(180) translate([rozmi1/2, rozmi2/2, HC-HMiPod+0.2])
+    rotate(90) {translate([rozmi2/2, rozmi1/2, HC-HMiPod+0.2])
         cylinder(10, dsmi/2, dsmi/2);
+        translate([rozmi2/2, rozmi1/2, HC-HMiPod-HTun])
+        cylinder(HTun, RTun, RTun);}
+        
+    rotate(180) {translate([rozmi1/2, rozmi2/2, HC-HMiPod+0.2])
+        cylinder(10, dsmi/2, dsmi/2);
+        translate([rozmi1/2, rozmi2/2, HC-HMiPod-HTun])
+        cylinder(HTun, RTun, RTun);}
     
-    rotate(270) translate([rozmi2/2, rozmi1/2, HC-HMiPod+0.2])
+    rotate(270) {translate([rozmi2/2, rozmi1/2, HC-HMiPod+0.2])
         cylinder(10, dsmi/2, dsmi/2);
+        translate([rozmi2/2, rozmi1/2, HC-HMiPod-HTun])
+        cylinder(HTun, RTun, RTun);}
         
   // Díra na přístup ke spojce
     translate([50,0,HC/8]){hull(){
             rotate([0,-90,0]) cylinder(h=100, d=12);
             translate([0,0,5*HC/8]) rotate([0,-90,0]) cylinder(h=100, d=12);
     }}
+    
+  // Otvory na připevnění drátů
+    translate([0,10+DMi/2,HC-12]){
+        difference(){
+        cylinder(6,13.2,13.2);
+        
+            cylinder(6,11.2,11.2);
+        }}
+        
+        translate([0,10+DMi/2,HC/4]){
+        difference(){
+        cylinder(6,13.2,13.2);
+        
+            cylinder(6,11.2,11.2);
+        }}
     
 }
