@@ -4,6 +4,7 @@ Zapojení
 konektor pro ovládání cívek:
 
 (y - zřejmě brzda)
+
 1 - GND Y
 3 - Y
 
