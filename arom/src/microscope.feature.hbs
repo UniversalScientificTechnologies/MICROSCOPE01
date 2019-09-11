@@ -15,19 +15,19 @@
 		<div class="col">
 			<table>
 				<tr>
-					<td><button class="btn btn-sm btn-microscope-control">R-</button></td>
-					<td><button class="btn btn-sm btn-microscope-control">Y+</button></td>
-					<td><button class="btn btn-sm btn-microscope-control">R+</button></td>
+					<td><button class="btn btn-sm btn-microscope-control" onclick="setMove(0,0,0,1)">R-</button></td>
+					<td><button class="btn btn-sm btn-microscope-control" onclick="setMove(0,1,0,0)">Y+</button></td>
+					<td><button class="btn btn-sm btn-microscope-control" onclick="setMove(0,0,0,-1)">R+</button></td>
 					<td></td>
 				</tr>
 				<tr>
-					<td><button class="btn btn-sm btn-microscope-control">X+</button></td>
-					<td><button class="btn btn-sm btn-microscope-control">H</button></td>
-					<td><button class="btn btn-sm btn-microscope-control">X-</button></td>
+					<td><button class="btn btn-sm btn-microscope-control" onclick="setMove(1,0,0,0)">X+</button></td>
+					<td><button class="btn btn-sm btn-microscope-control" onclick="setMove(0,0,0,0)">H</button></td>
+					<td><button class="btn btn-sm btn-microscope-control" onclick="setMove(-1,0,0,0)">X-</button></td>
 				</tr>
 				<tr>
 					<td></td>
-					<td><button class="btn btn-sm btn-microscope-control">Y-</button></td>
+					<td><button class="btn btn-sm btn-microscope-control" onclick="setMove(0,-1,0,0)">Y-</button></td>
 					<td></td>
 				</tr>
 			</table>
@@ -38,20 +38,26 @@
 			  <button type="button" class="btn btn-outline-success btn-microscope-distance">1 mm</button>
 			  <button type="button" class="btn btn-outline-success btn-microscope-distance">10 mm</button>
 			</div>
+			<div>
+				<input type="number" id="units" value=1, min=0.5, max=10>
+			</div>
 
 		</div>
 
 		<div class="col">
 			<table>
-				<tr><td><button class="btn btn-sm btn-microscope-control">Z+</button></td></tr>
-				<tr><td><button class="btn btn-sm btn-microscope-control">H</button></td></tr>
-				<tr><td><button class="btn btn-sm btn-microscope-control">Z-</button></td></tr>
+				<tr><td><button class="btn btn-sm btn-microscope-control" onclick="setMove(0,0,1,0)">Z+</button></td></tr>
+				<tr><td><button class="btn btn-sm btn-microscope-control" onclick="setMove(0,0,0,0)">H</button></td></tr>
+				<tr><td><button class="btn btn-sm btn-microscope-control" onclick="setMove(0,0,-1,0)">Z-</button></td></tr>
 			</table>
 
 			<div class="btn-group" role="group" aria-label="Basic example">
 			  <button type="button" class="btn btn-outline-success btn-microscope-distances-z">0.1 mm</button>
 			  <button type="button" class="btn btn-outline-success btn-microscope-distances-z">1 mm</button>
 			  <button type="button" class="btn btn-outline-success btn-microscope-distances-z">10 mm</button>
+			</div>
+			<div>
+				<input type="number" id="units_z" value=1, min=0.5, max=10>
 			</div>
 		</div>
 
@@ -67,7 +73,7 @@
 				<tr><td>Rot</td><td>
 					<div class="btn-group btn-group-justified" role="group" aria-label="Basic example">
 					  <button type="button" class="btn btn-outline-success btn-microscope-magnet mag2 state-1" onclick="setMag(2, 1)">Sepnout</button>
-					  <button type="button" class="btn btn-outline-danger btn-microscope-magne mag2 state-0" onclick="setMag(2, 0)">Rozepnout</button>
+					  <button type="button" class="btn btn-outline-danger btn-microscope-magnet mag2 state-0" onclick="setMag(2, 0)">Rozepnout</button>
 					</div>
 				</td></tr>
 				<tr><td>Break</td><td>
@@ -94,6 +100,21 @@
 
 
 <script type="text/javascript">
+
+	function setMove(x,y,z,o){
+		var sendCtrl = new ROSLIB.Topic({
+			ros : ros,
+			name : '/axis/move',
+			messageType : 'microscope/microscope_motor_move'
+		});
+		var msg = new ROSLIB.Message({
+		    x: x*$('#units').val(),
+			y: y*$('#units').val(),
+			z: z*$('#units_z').val(),
+			o: o*$('#units').val(),
+		});
+	    sendCtrl.publish(msg);
+	}
 	
 
   var rcvMag = new ROSLIB.Topic({

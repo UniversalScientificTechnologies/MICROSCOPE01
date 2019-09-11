@@ -17,7 +17,8 @@ find_package(catkin REQUIRED
 	#DIRECTORY
   	#arom/msg
    	FILES
-   	microscope_motor.msg
+    microscope_motor.msg
+    microscope_motor_move.msg
    	state_microscope_motor.msg
    	microscope_magnet.msg
    	state_microscope_magnet.msg
